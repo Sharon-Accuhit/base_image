@@ -1,0 +1,16 @@
+# first stage
+# install package
+FROM public.ecr.aws/debian/debian:stable-slim
+WORKDIR /app
+COPY ./app .
+RUN ["/bin/bash", "install.sh"]
+
+# second stage
+# make settings, e.g., copy config to folder, make new folder.
+RUN ["/bin/bash", "set.sh"]
+
+# final stage
+# run service
+RUN apt-get install dumb-init -y
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["/bin/bash", "run.sh"]
