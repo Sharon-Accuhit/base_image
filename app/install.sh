@@ -7,7 +7,7 @@ apt-get install curl git nano -y &>/dev/null
 #install Node.js
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash &>/dev/null
 source ~/.bashrc
-nvm -v
+echo "nvm -v : "; nvm -v
 nvm install v16.18 &>/dev/null
 [ $? == 0 ] && echo "install Node.js ok"
-node -v
+[ $? == 0 ] && echo "node -v : " && node -v
