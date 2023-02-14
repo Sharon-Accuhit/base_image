@@ -6,33 +6,23 @@ phases:
       - echo Started pre_build phase...
       # set time zone
       - cp /usr/share/zoneinfo/Asia/Taipei /etc/localtime
-      # set the tag of image
-      - IMAGE_TAG=$(date +%Y%m%d%H%M%S)
-      - echo $IMAGE_TAG > codedeploy/image_tag.txt
-      # create S3 directory
-      - mkdir -p $CodePipeline/$OutputArtifact
+      # set the tag of the previous image
+      - PREVIOUS_IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+      - echo $PREVIOUS_IMAGE_TAG > image_tag.txt
       - ls -al
       - aws --version
-      - aws s3 cp --recursive . s3://dockerfile-baseimage/$CodePipeline/$OutputArtifact/
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin public.ecr.aws/$ALIAS
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...          
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG -f Dockerfile.base .
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker push public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
       - rm Dockerfile.base
       - ls -al
-      - echo Writing image definitions file...
-      - printf '[{"name":"dockerfile-base-image","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
-artifacts:
-  files:
-    - codedeploy/* 
-    - appspec.yml
-    - imagedefinitions.json

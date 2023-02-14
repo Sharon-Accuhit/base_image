@@ -1,4 +1,4 @@
 #!/bin/bash
-echo "php start"
+echo "Node.js start"
+node
 
-busybox httpd -f -h /opt/www
