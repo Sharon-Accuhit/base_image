@@ -13,10 +13,10 @@ phases:
       - ls -al
       - aws s3 cp --recursive . s3://$S3/$CodePipeline/$OutputArtifact/
       # update the AWS CLI version
-      - yum remove awscli -y &>/dev/null
-      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" &>/dev/null
-      - unzip -u awscliv2.zip &>/dev/null
-      - bash ./aws/install &>/dev/null
+      - yum remove awscli -y
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip -u awscliv2.zip
+      - bash ./aws/install
       - rm -f awscliv2.zip
       - hash -r
       - aws --version
