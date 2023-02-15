@@ -1,4 +1,4 @@
 #!/bin/bash
-echo "Node.js start"
+#start Node.js
 node
 

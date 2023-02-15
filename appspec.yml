@@ -1,0 +1,9 @@
+version: 0.0
+os: linux
+files:
+  - source: codedeploy
+    destination: /app
+hooks:
+  ApplicationStart:
+    - location: codedeploy/container.sh
+      timeout: 180

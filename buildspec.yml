@@ -6,13 +6,28 @@ phases:
       - echo Started pre_build phase...
       # set time zone
       - cp /usr/share/zoneinfo/Asia/Taipei /etc/localtime
-      # set the tag of the previous image
+      # set the tag of previous image
       - PREVIOUS_IMAGE_TAG=$(date +%Y%m%d%H%M%S)
-      - echo $PREVIOUS_IMAGE_TAG > image_tag.txt
+      # create S3 directory
+      - mkdir -p $CodePipeline/$OutputArtifact
       - ls -al
+      - aws s3 cp --recursive . s3://$S3/$CodePipeline/$OutputArtifact/
+      # update the AWS CLI version
+      - yum remove awscli -y &>/dev/null
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" &>/dev/null
+      - unzip -u awscliv2.zip &>/dev/null
+      - ./aws/install &>/dev/null
+      - rm -f awscliv2.zip
+      - hash -r
       - aws --version
       - echo Logging in to Amazon ECR...
       - aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin public.ecr.aws/$ALIAS
+      # revise the previous image
+      - docker pull public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker tag public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$PREVIOUS_IMAGE_TAG
+      - aws ecr-public batch-delete-image --repository-name $IMAGE_REPO_NAME --image-ids imageTag=$IMAGE_TAG --region $AWS_DEFAULT_REGION
+      - docker rmi -f public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker push public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$PREVIOUS_IMAGE_TAG
   build:
     commands:
       - echo Build started on `date`
@@ -26,3 +41,10 @@ phases:
       - docker push public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
       - rm Dockerfile.base
       - ls -al
+      - echo Writing image definitions file...
+      - printf '[{"name":"$IMAGE_REPO_NAME","imageUri":"%s"}]' public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+  files:
+    - codedeploy/* 
+    - appspec.yml
+    - imagedefinitions.json
