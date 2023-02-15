@@ -13,12 +13,12 @@ phases:
       - ls -al
       - aws s3 cp --recursive . s3://$S3/$CodePipeline/$OutputArtifact/
       # update the AWS CLI version
-      - yum remove awscli -y
-      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - unzip -u awscliv2.zip &>/dev/null
-      - bash ./aws/install --update
-      - rm -f awscliv2.zip
-      - hash -r
+      #- yum remove awscli -y
+      #- curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #- unzip -u awscliv2.zip &>/dev/null
+      #- bash ./aws/install --update
+      #- rm -f awscliv2.zip
+      #- hash -r
       - aws --version
       - echo Logging in to Amazon ECR...
       - aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin public.ecr.aws/$ALIAS
