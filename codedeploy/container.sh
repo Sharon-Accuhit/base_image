@@ -36,18 +36,6 @@ then
   rm tag.txt
 fi
 
-docker images | grep "none" &>/dev/null
-if [ $? = 0 ]
-then
-  docker images | grep "none" | \
-  cut -d " " -f 40 > tag.txt
-  cat tag.txt | while read line
-  do
-    docker rmi -f $line
-  done
-  rm tag.txt
-fi
-
 #pull image
 echo Logging in to Amazon ECR...
 /usr/local/bin/aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | \
@@ -64,3 +52,16 @@ public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
 
 #show the container is successfully running
 docker logs $CONTAINER 
+
+#remove the previous images
+docker images | grep "none" &>/dev/null
+if [ $? = 0 ]
+then
+  docker images | grep "none" | \
+  cut -d " " -f 40 > tag.txt
+  cat tag.txt | while read line
+  do
+    docker rmi -f $line
+  done
+  rm tag.txt
+fi
