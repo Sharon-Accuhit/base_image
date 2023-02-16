@@ -9,9 +9,9 @@ phases:
       # set the tag of previous image
       - PREVIOUS_IMAGE_TAG=$(date +%Y%m%d%H%M%S)
       # create S3 directory
-      - mkdir -p $CodePipeline/$OutputArtifact
-      - ls -al
-      - aws s3 cp --recursive . s3://$S3/$CodePipeline/$OutputArtifact/
+      #- mkdir -p $CodePipeline/$OutputArtifact
+      #- ls -al
+      #- aws s3 cp --recursive . s3://$S3/$CodePipeline/$OutputArtifact/
       # update the AWS CLI version
       - yum remove awscli -y
       - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" &>/dev/null
