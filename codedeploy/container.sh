@@ -28,7 +28,7 @@ fi
 
 #pull image
 echo Logging in to Amazon ECR...
-ws ecr-public get-login-password --region $AWS_DEFAULT_REGION | \
+aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | \
 docker login --username AWS --password-stdin \
 public.ecr.aws/$ALIAS
 echo Pulling the Docker image...
