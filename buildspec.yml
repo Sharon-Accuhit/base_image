@@ -32,7 +32,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...          
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG -f Dockerfile.base .
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG -f $DOCKERFILE .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
