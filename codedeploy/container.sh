@@ -10,6 +10,16 @@ yum upgrade && yum update -y
 yum install docker -y
 systemctl start docker
 
+# update the AWS CLI version
+yum remove awscli -y
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" &>/dev/null
+unzip -u awscliv2.zip &>/dev/null
+bash ./aws/install --update
+rm -f awscliv2.zip
+rm -r aws
+hash -r
+/usr/local/bin/aws --version
+
 #set variable
 source config.txt
 
@@ -28,7 +38,7 @@ fi
 
 #pull image
 echo Logging in to Amazon ECR...
-aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | \
+/usr/local/bin/aws ecr-public get-login-password --region $AWS_DEFAULT_REGION | \
 docker login --username AWS --password-stdin \
 public.ecr.aws/$ALIAS
 echo Pulling the Docker image...
