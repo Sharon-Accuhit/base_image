@@ -1,5 +1,5 @@
 export AWS_DEFAULT_REGION=us-east-1
 export IMAGE_REPO_NAME=dockerfile
-export ALIAS=o2p8a6m8
+export ALIAS=accuhit-it
 export IMAGE_TAG=latest
 export CONTAINER=base
