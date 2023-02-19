@@ -54,14 +54,16 @@ public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
 docker logs $CONTAINER 
 
 # remove the previous images
-docker images | grep "none" &>/dev/null
-if [ $? = 0 ]
-then
-  docker images | grep "none" | \
-  cut -d " " -f 40 > tag.txt
-  cat tag.txt | while read line
-  do
-    docker rmi -f $line
-  done
-  rm tag.txt
-fi
+while true
+do
+  docker images | grep "none" &>/dev/null
+  if [ $? = 0 ]
+  then
+    tag=$(docker images | grep "none" | \
+    head -n 1 | fmt -u | \
+    cut -d " " -f 3)
+    docker rmi -f $tag
+  else
+    break
+  fi
+done
