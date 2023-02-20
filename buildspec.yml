@@ -39,7 +39,7 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG
-      - rm Dockerfile.base
+      - rm $DOCKERFILE
       - ls -al
       - echo Writing image definitions file...
       - printf '[{"name":"$IMAGE_REPO_NAME","imageUri":"%s"}]' public.ecr.aws/$ALIAS/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
