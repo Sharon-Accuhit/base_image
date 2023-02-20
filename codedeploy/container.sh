@@ -6,7 +6,7 @@ cd app
 # install docker
 docker &>/dev/null
 [ $? = 0 ] && yum erase docker -y 
-yum upgrade && yum update -y
+yum update -y && yum upgrade -y
 yum install docker -y
 systemctl start docker
 
